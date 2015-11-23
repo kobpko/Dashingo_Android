@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +26,6 @@
         <activity
             android:name=".Activity.MainActivity"
             android:label="@string/title_activity_main" >
-
         </activity>
         <activity
             android:name=".Activity.HomePage"
@@ -35,6 +35,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activity.marker_edit"
+            android:label="@string/title_activity_marker_edit">
+
         </activity>
     </application>
 

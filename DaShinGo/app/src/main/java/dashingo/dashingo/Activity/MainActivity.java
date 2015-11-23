@@ -1,7 +1,12 @@
 package dashingo.dashingo.Activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,24 +29,34 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.amap.api.navi.model.AMapNaviPath;
 
 import java.util.Vector;
 
 import dashingo.dashingo.R;
+import database.DatabaseHelper;
+import database.entity.point;
 //手机号登录 微信登陆
 //用户 《----粉丝
 //推荐轨迹
 //
 
-public class MainActivity extends Activity implements LocationSource,AMapLocationListener ,View.OnClickListener, View.OnLongClickListener {
+public class MainActivity extends Activity implements LocationSource,AMapLocationListener ,View.OnClickListener, View.OnLongClickListener,AMap.OnMapClickListener
+{
         private MapView mapView;
         private AMap aMap;
         private OnLocationChangedListener mListener;
         private LocationManagerProxy mAMapLocationManager;
         private Vector<AMapLocation> track=new Vector<>();
+        // Marker计数器
+        private int markerCounts = 0;
+
         private Button button_start;
         private Button button_stop;
-
+        private Button button_addmarker;
+        private SQLiteOpenHelper sqLiteOpenHelper;
+        private SQLiteDatabase sqLiteDatabase;
+        DatabaseHelper databaseHelper = null;
         private boolean trackenabled = false;
 
     private void drawtrace(Vector<AMapLocation> track)
@@ -85,6 +100,8 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 if(trackenabled) {
                     track.add(amapLocation);
+//                    String a;
+//                    a = amapLocation.getAddress();
                     drawtraceBypoint(track);
                 }
 
@@ -113,10 +130,23 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        database function
+//        databaseHelper = new DatabaseHelper(MainActivity.this);
+//        databaseHelper.getWritableDatabase();
+//        point point = new point(1);
+//        point.setAddress("China");
+//        databaseHelper.savepoint(point);
+//        System.out.print(databaseHelper.findpoint(1).getAddress());
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
+
+        button_addmarker = (Button)findViewById(R.id.button3);
+        button_addmarker.setOnClickListener(this);
+
         button_start = (Button)findViewById(R.id.button);
         button_start.setOnClickListener(this);
         button_start.setBackgroundColor(Color.GREEN);
@@ -164,10 +194,27 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 break;
 //            case R.id.button2:
 //                trackenabled = false;
+            case R.id.button3:
+                Intent intent_marker = new Intent();
+                intent_marker.setClass(this,marker_edit.class);
+
+                startActivityForResult(intent_marker,1000);
+
+                break;
             default:
                 break;
         }
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1000 && resultCode == 1001)
+        {
+            String result_value = data.getStringExtra("result");
+            button_addmarker.setText(result_value);
+        }
     }
     @Override
     protected void onPause() {
@@ -246,5 +293,8 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         }
 
 
+    @Override
+    public void onMapClick(LatLng latLng) {
 
+    }
 }
