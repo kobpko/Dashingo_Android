@@ -46,9 +46,11 @@
         android:layout_height="48dp"
         android:text="new"
         android:id="@+id/button3"
-        android:layout_alignBottom="@+id/map"
-        android:layout_alignRight="@+id/map"
-        android:layout_alignEnd="@+id/map" />
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/button"
+        android:layout_toEndOf="@+id/button"
+        android:layout_marginLeft="71dp"
+        android:layout_marginStart="71dp" />
 
 
 </RelativeLayout>

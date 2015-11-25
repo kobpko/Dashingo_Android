@@ -27,15 +27,18 @@ import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.model.PolylineOptions;
-import com.amap.api.navi.model.AMapNaviPath;
+
 
 import java.util.Vector;
 
+import basic.ScreenManager;
 import dashingo.dashingo.R;
 import database.DatabaseHelper;
 import database.entity.point;
+import map.Picture_marker;
 //手机号登录 微信登陆
 //用户 《----粉丝
 //推荐轨迹
@@ -50,6 +53,9 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         private Vector<AMapLocation> track=new Vector<>();
         // Marker计数器
         private int markerCounts = 0;
+
+
+        private Picture_marker picture_marker;
 
         private Button button_start;
         private Button button_stop;
@@ -100,6 +106,11 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 if(trackenabled) {
                     track.add(amapLocation);
+                    if(track.size()>1)
+                    {
+                        button_addmarker.setVisibility(View.VISIBLE);
+                    }
+
 //                    String a;
 //                    a = amapLocation.getAddress();
                     drawtraceBypoint(track);
@@ -140,11 +151,14 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 
 
         super.onCreate(savedInstanceState);
+        ScreenManager.getInstance().addActivity(this);
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
 
         button_addmarker = (Button)findViewById(R.id.button3);
+        //初始设置为不可见，当vector有储存的点的时候才可以创建
+        button_addmarker.setVisibility(View.GONE);
         button_addmarker.setOnClickListener(this);
 
         button_start = (Button)findViewById(R.id.button);
@@ -196,9 +210,8 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 //                trackenabled = false;
             case R.id.button3:
                 Intent intent_marker = new Intent();
-                intent_marker.setClass(this,marker_edit.class);
-
-                startActivityForResult(intent_marker,1000);
+                intent_marker.setClass(MainActivity.this,marker_edit.class);
+                startActivityForResult(intent_marker, 1000);
 
                 break;
             default:
@@ -206,16 +219,23 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         }
 
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1000 && resultCode == 1001)
-        {
-            String result_value = data.getStringExtra("result");
-            button_addmarker.setText(result_value);
-        }
-    }
+//    // 收取activity传回的值 新建marker
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+//    {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if(requestCode == 1000 && resultCode == 1001)
+//        {
+//            picture_marker = new Picture_marker();
+//            picture_marker.setTitle(data.getStringExtra("title"));
+//            picture_marker.setContent(data.getStringExtra("content"));
+//    //        picture_marker.setImagefile(getIntent().getStringExtra("pictureUrl"));
+//
+//            button_addmarker.setText(picture_marker.getTitle());
+//     //       MarkerOptions markerOptions = new MarkerOptions();
+//        }
+//    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -295,6 +315,29 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 
     @Override
     public void onMapClick(LatLng latLng) {
+
+    }
+
+
+   // add marker
+    public void updateMarker(String title,String content, String picUrl)
+    {
+
+        button_addmarker.setText(picUrl);
+        MarkerOptions markerOptions = new MarkerOptions();
+        // 设置Marker点击之后显示的标题
+        markerOptions.title(title+"\n"+content);
+        // 当前vector最后一位 即最后定位的一个点进行记录。
+        LatLng latLng = new LatLng( track.lastElement().getLatitude(), track.lastElement().getLongitude());
+        markerOptions.position(latLng);
+        // 设置Marker的可见性
+        markerOptions.visible(true);
+        // 设置Marker是否可以被拖拽，这里先设置为false，之后会演示Marker的拖拽功能
+        markerOptions.draggable(false);
+        // 将Marker添加到地图上去
+        aMap.addMarker(markerOptions);
+        // Marker的计数器自增
+        markerCounts++;
 
     }
 }

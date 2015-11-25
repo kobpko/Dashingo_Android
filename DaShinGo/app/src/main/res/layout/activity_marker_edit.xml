@@ -60,10 +60,19 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="45dp"
         android:text="完成"
         android:id="@+id/button_finish"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/editText_title" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:text="取消"
+        android:id="@+id/button_cancel"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
