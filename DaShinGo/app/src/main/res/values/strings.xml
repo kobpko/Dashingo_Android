@@ -8,5 +8,6 @@
     <string name="title_activity_main_activity2">MainActivity2</string>
     <string name="title_activity_home_page">HomePage</string>
     <string name="title_activity_marker_edit">marker_edit</string>
+    <string name="title_activity_regist">RegistActivity</string>
 
 </resources>

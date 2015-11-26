@@ -75,4 +75,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:id="@+id/imageView_image"
+        android:layout_below="@+id/button_photo"
+        android:layout_alignRight="@+id/button_finish"
+        android:layout_alignEnd="@+id/button_finish" />
+
 </RelativeLayout>

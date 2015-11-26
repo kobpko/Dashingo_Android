@@ -2,6 +2,7 @@ package dashingo.dashingo.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -29,6 +31,7 @@ public class marker_edit extends Activity implements View.OnClickListener {
     private File cameraFile;
     private String picUrl;
     private Picture_marker picture_marker;
+    private ImageView imageView_image;
     public static final int REQUEST_CODE_CAMERA = 18;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,9 @@ public class marker_edit extends Activity implements View.OnClickListener {
         button_confirm.setOnClickListener(this);
         button_cancel = (Button)findViewById(R.id.button_cancel);
         button_cancel.setOnClickListener(this);
+        imageView_image = (ImageView)findViewById(R.id.imageView_image);
+        imageView_image.setVisibility(View.VISIBLE);
+
 
     }
     @Override
@@ -86,7 +92,8 @@ public class marker_edit extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.button_cancel:
-                finish();
+                imageView_image.setImageBitmap(BitmapFactory.decodeFile(picUrl));
+            //    finish();
                 break;
             default:
                 break;
@@ -122,7 +129,8 @@ public class marker_edit extends Activity implements View.OnClickListener {
         cameraFile = new File(FileNameUtil.getInstance()
                 .getPicNameByTime("jpg"));
         cameraFile.getParentFile().mkdirs();
-        picUrl = Uri.fromFile(cameraFile)+"";
+        picUrl = FileNameUtil.getInstance()
+                .getPicNameByTime("jpg");
         startActivityForResult(
                 new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
                         MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraFile)),
@@ -137,7 +145,8 @@ public class marker_edit extends Activity implements View.OnClickListener {
         switch (requestCode) {
             case REQUEST_CODE_CAMERA:
                 if (cameraFile != null && cameraFile.exists()) {
-                      picture_marker = new Picture_marker();
+                     picture_marker = new Picture_marker();
+
                     picture_marker.setTitle(text_title.getText().toString().trim());
                     picture_marker.setContent(text_text.getText().toString().trim());
                     picture_marker.setImagefile(cameraFile);

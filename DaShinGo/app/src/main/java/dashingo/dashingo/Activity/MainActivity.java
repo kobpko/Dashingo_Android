@@ -56,7 +56,7 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 
 
         private Picture_marker picture_marker;
-
+        private TextView imagepath;
         private Button button_start;
         private Button button_stop;
         private Button button_addmarker;
@@ -155,6 +155,7 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
+        imagepath = (TextView) findViewById(R.id.textView_showimage);
 
         button_addmarker = (Button)findViewById(R.id.button3);
         //初始设置为不可见，当vector有储存的点的时候才可以创建
@@ -322,8 +323,10 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
    // add marker
     public void updateMarker(String title,String content, String picUrl)
     {
+      //   /storage/emulated/0/DCIM/Camera/1448518655415.jpg
+     //   file://   /sdcard/DCIM/Camera/1448518655415.jpg
 
-        button_addmarker.setText(picUrl);
+        imagepath.setText(picUrl);
         MarkerOptions markerOptions = new MarkerOptions();
         // 设置Marker点击之后显示的标题
         markerOptions.title(title+"\n"+content);
