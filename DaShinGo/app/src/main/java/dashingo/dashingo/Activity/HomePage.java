@@ -31,9 +31,14 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import org.apache.http.entity.StringEntity;
 
 import java.io.File;
+import java.util.List;
+import java.util.Random;
 
+import basic.ScreenManager;
 import basic.TDUtils;
 import dashingo.dashingo.R;
+import model.Message;
+import model.Route;
 import model.User;
 
 
@@ -43,6 +48,9 @@ public class HomePage extends Activity implements View.OnClickListener {
     private TextView text_id;
     private TextView text_password_;
     private TextView tv_login_regist;
+    private Message mes = null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +63,24 @@ public class HomePage extends Activity implements View.OnClickListener {
         button_tomap=(Button)findViewById(R.id.button_tomap);
         button_tomap.setOnClickListener(this);
 
+
     }
     @Override
     public void onClick(View view) {
         switch (view.getId())
         {
             case R.id.button_tomap:
-
-
+                ScreenManager.getInstance().addActivity(this);
                 login();
-                Intent intent = new Intent();
-                intent.setClass(this, MainActivity.class);
-                startActivity(intent);
+                if(mes != null) {
+                    if (mes.getResult()) {
+//                        final MainApplication mainApplication = MainApplication.getInstance();
+//                        mainApplication.setUserid();
+                        Intent intent = new Intent();
+                        intent.setClass(this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
 //                if(text_id.getText().toString().isEmpty())
 //                {
 //                    T.showLong(HomePage.this,"手机号不能为空" );
@@ -98,8 +112,7 @@ public class HomePage extends Activity implements View.OnClickListener {
         }
 
     }
-        public void login()
-        {
+        public void login() {
             final MainApplication mainApplication = MainApplication.getInstance();
             TDUtils.execute(new Runnable() {
                 @Override
@@ -108,32 +121,53 @@ public class HomePage extends Activity implements View.OnClickListener {
                         HttpUtils httpUtils = new HttpUtils();
                         RequestParams requestParams = new RequestParams("utf-8");
                         requestParams.setContentType("application/json;charset=utf-8");
+
                         User user = new User();
                         user.setUserId(text_id.getText().toString());
                         user.setPassword(text_password_.getText().toString());
                         user.setUserName("");
-                        requestParams.setBodyEntity(new StringEntity(JSON.toJSONString(user)));
+                        requestParams.setBodyEntity(new StringEntity(JSON.toJSONString(user), "utf-8"));
+
                         httpUtils.send(HttpRequest.HttpMethod.POST, mainApplication.getSigninUrl(), requestParams, new RequestCallBack<Object>() {
                             @Override
-                            public void onSuccess(ResponseInfo<Object> objectResponseInfo) {
+                            public void onSuccess(final ResponseInfo<Object> objectResponseInfo) {
+                                final HomePage act = (HomePage) ScreenManager.getInstance().getActivityByClass(HomePage.class);
+                                if (act != null) {
+                                    act.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //使用线程，调用Mainactivity的方法
+                  //                          String a =(String) objectResponseInfo.result;
+                  //                         System.out.println((String) objectResponseInfo.result);
 
+                                            act.updateView((String) objectResponseInfo.result);
+
+                                        }
+                                    });
+                                }
                             }
+
                             @Override
                             public void onFailure(HttpException e, String s) {
                                 Log.d("tanjingrusb", s);
                             }
                         });
 
-
                     } catch (Exception e) {
                         //					NetExceptionManager.showException(context, e);
                         e.printStackTrace();
                     }
 
-                }
+
+                      }
             });
+        }
+                    public void updateView(String routes){
+                         final Message mes =  JSON.parseObject(routes, Message.class);
+                         this.mes = mes;
 
 
+                       }
 
 //            String json = JSONArray.fromObject(user).toString();
 //            RequestParams params = new RequestParams();
@@ -185,7 +219,7 @@ public class HomePage extends Activity implements View.OnClickListener {
 
 
 
-        }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,6 +242,7 @@ public class HomePage extends Activity implements View.OnClickListener {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }

@@ -70,6 +70,7 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
 
         private Picture_marker picture_marker;
         private TextView imagepath;
+        private Button button_list;
         private Button button_start;
         private Button button_stop;
         private Button button_addmarker;
@@ -178,7 +179,8 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         //初始设置为不可见，当vector有储存的点的时候才可以创建
         button_addmarker.setVisibility(View.GONE);
         button_addmarker.setOnClickListener(this);
-
+        button_list = (Button)findViewById(R.id.button_list);
+        button_list.setOnClickListener(this);
         button_saveRoute = (Button)findViewById(R.id.button_saveRoute);
         button_saveRoute.setOnClickListener(this);
         button_start = (Button)findViewById(R.id.button);
@@ -236,6 +238,13 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 break;
             case R.id.button_saveRoute:
                 saveRoute();
+
+            case R.id.button_list:
+                Intent intent_list = new Intent();
+                intent_list.setClass(this,MActivity.class);
+                startActivity(intent_list);
+                break;
+
             default:
                 break;
         }

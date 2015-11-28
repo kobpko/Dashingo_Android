@@ -23,6 +23,9 @@ public class Atn {
         this.title = title;
     }
 
+    public Atn() {
+    }
+
     public String getImage() {
         return image;
     }

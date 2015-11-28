@@ -7,6 +7,16 @@ public class Message {
 
     private Boolean result;
 
+    public Message() {
+    }
+
+    public Message(Boolean result, Object obj) {
+        this.result = result;
+        this.obj = obj;
+    }
+
+    private Object obj;
+
     public Boolean getResult() {
         return result;
     }

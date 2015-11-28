@@ -7,6 +7,10 @@ import org.apache.http.NameValuePair;
  */
 public class Name_Value implements NameValuePair {
     private String name;
+
+    public Name_Value() {
+    }
+
     private String value;
 
     public Name_Value(String name, String value) {

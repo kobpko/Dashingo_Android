@@ -21,29 +21,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText_id"
-        android:layout_below="@+id/regist"
         android:background="@android:drawable/edit_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        android:hint="请输入您的用户名" />
+        android:layout_marginTop="70dp"
+        android:hint="请输入您的用户名"
+        android:layout_below="@+id/regist"
+
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText_password"
         android:background="@android:drawable/edit_text"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:hint="请输入您的密码" />
+        android:hint="请输入您的密码"
+        android:layout_marginTop="215dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <EditText
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_message"
+        android:background="@android:drawable/edit_text"
+        android:hint="请输入您的手机号"
+        android:layout_marginTop="290dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_messagecheck"
+        android:background="@android:drawable/edit_text"
+        android:hint="验证码"
+        android:layout_marginTop="360dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="注册"
         android:id="@+id/button_regist"
-        android:layout_marginTop="55dp"
-        android:layout_below="@+id/editText_password"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="35dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -53,5 +74,14 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发送验证码"
+        android:id="@+id/button_sendmessage"
+        android:layout_alignTop="@+id/editText_message"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

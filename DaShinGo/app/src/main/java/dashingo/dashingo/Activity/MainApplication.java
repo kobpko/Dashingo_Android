@@ -8,11 +8,29 @@ public class MainApplication extends Application {
 
     private String userid;
     private String userpassword;
+
+    public static String getGetAllList() {
+        return getAllList;
+    }
+
     private String username;
-    private static String signupUrl ="http://10.0.1.22:8080/signUp";
-    private static String signinUrl ="http://10.0.1.22:8080/signIn";
-    private static String uploadRouteInfoUrl ="http://10.0.1.22:8080/uploadRouteInfo";
+    private static String HostName = "http://139.129.131.78:8080/DaShinGo/";
+    private static String signupUrl = HostName + "signUp";
+    private static String signinUrl = HostName +"signIn";
+    private static String getAllList = HostName + "route/getAll";
+    private static String uploadRouteInfoUrl = HostName + "-uploadRouteInfo";
+    private static String upLoadPic =  HostName + "uploadPics";
+    private static String sendMessage = "http://222.73.117.158:80/msg/HttpBatchSendSM";
+    public static String getSendMessage() {
+        return sendMessage;
+    }
+
+
     private static MainApplication instance;
+
+    public static String getUpLoadPic() {
+        return upLoadPic;
+    }
 
     public static String getUploadRouteInfoUrl() {
         return uploadRouteInfoUrl;

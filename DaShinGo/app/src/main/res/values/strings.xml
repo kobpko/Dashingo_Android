@@ -10,5 +10,6 @@
     <string name="title_activity_marker_edit">marker_edit</string>
     <string name="title_activity_regist">RegistActivity</string>
     <string name="title_activity_route_list">RouteListActivity</string>
+    <string name="title_activity_m">MActivity</string>
 
 </resources>

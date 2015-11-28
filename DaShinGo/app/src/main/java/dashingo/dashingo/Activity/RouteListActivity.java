@@ -1,5 +1,6 @@
 package dashingo.dashingo.Activity;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,7 +8,7 @@ import android.view.MenuItem;
 
 import dashingo.dashingo.R;
 
-public class RouteListActivity extends ActionBarActivity {
+public class RouteListActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
