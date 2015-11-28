@@ -3,6 +3,7 @@ package dashingo.dashingo.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +20,19 @@ import android.widget.TextView;
 //
 //import net.sf.json.JSONArray;
 
+import com.alibaba.fastjson.JSON;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+
+import org.apache.http.entity.StringEntity;
+
 import java.io.File;
 
+import basic.TDUtils;
 import dashingo.dashingo.R;
 import model.User;
 
@@ -88,10 +100,39 @@ public class HomePage extends Activity implements View.OnClickListener {
     }
         public void login()
         {
-            User user = new User();
-            user.setUserName("zhao");
-            user.setPassword(text_password_.getText().toString());
-            user.setUserId(text_id.getText().toString());
+            final MainApplication mainApplication = MainApplication.getInstance();
+            TDUtils.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HttpUtils httpUtils = new HttpUtils();
+                        RequestParams requestParams = new RequestParams("utf-8");
+                        requestParams.setContentType("application/json;charset=utf-8");
+                        User user = new User();
+                        user.setUserId(text_id.getText().toString());
+                        user.setPassword(text_password_.getText().toString());
+                        user.setUserName("");
+                        requestParams.setBodyEntity(new StringEntity(JSON.toJSONString(user)));
+                        httpUtils.send(HttpRequest.HttpMethod.POST, mainApplication.getSigninUrl(), requestParams, new RequestCallBack<Object>() {
+                            @Override
+                            public void onSuccess(ResponseInfo<Object> objectResponseInfo) {
+
+                            }
+                            @Override
+                            public void onFailure(HttpException e, String s) {
+                                Log.d("tanjingrusb", s);
+                            }
+                        });
+
+
+                    } catch (Exception e) {
+                        //					NetExceptionManager.showException(context, e);
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
 
 
 //            String json = JSONArray.fromObject(user).toString();

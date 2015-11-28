@@ -23,6 +23,9 @@ public class Node {
         this.point = point;
     }
 
+    public Node() {
+    }
+
     public Node(Atn atn, Point point) {
         this.atn = atn;
         this.point = point;

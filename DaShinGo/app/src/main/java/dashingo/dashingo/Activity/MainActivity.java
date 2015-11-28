@@ -1,10 +1,7 @@
 package dashingo.dashingo.Activity;
 
 import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
@@ -17,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.LocationManagerProxy;
@@ -30,15 +28,30 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 
 
+import org.apache.http.entity.StringEntity;
+
+import java.util.Date;
 import java.util.Vector;
 
 import basic.ScreenManager;
+import basic.TDUtils;
 import dashingo.dashingo.R;
 import database.DatabaseHelper;
 import database.entity.point;
 import map.Picture_marker;
+import model.Atn;
+import model.Node;
+import model.Point;
+import model.Route;
+import model.User;
 //手机号登录 微信登陆
 //用户 《----粉丝
 //推荐轨迹
@@ -46,13 +59,13 @@ import map.Picture_marker;
 
 public class MainActivity extends Activity implements LocationSource,AMapLocationListener ,View.OnClickListener, View.OnLongClickListener,AMap.OnMapClickListener
 {
+
         private MapView mapView;
         private AMap aMap;
         private OnLocationChangedListener mListener;
         private LocationManagerProxy mAMapLocationManager;
         private Vector<AMapLocation> track=new Vector<>();
-        // Marker计数器
-        private int markerCounts = 0;
+        private Vector<Node> node = new Vector<>();
 
 
         private Picture_marker picture_marker;
@@ -60,26 +73,27 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         private Button button_start;
         private Button button_stop;
         private Button button_addmarker;
+        private Button button_saveRoute;
         private SQLiteOpenHelper sqLiteOpenHelper;
         private SQLiteDatabase sqLiteDatabase;
         DatabaseHelper databaseHelper = null;
         private boolean trackenabled = false;
-
-    private void drawtrace(Vector<AMapLocation> track)
-    {
-        aMap.addPolyline(new PolylineOptions().add(new LatLng(track.elementAt(0).getLatitude(),track.elementAt(0).getLongitude())).geodesic(true).color(Color.RED));
-        if(!track.isEmpty())
-        {
-            for(int i=1;i<track.size();i++)
-            {
-                aMap.addPolyline(new PolylineOptions()
-                        .visible(true)
-                        .add(new LatLng(track.elementAt(i).getLatitude(), track.elementAt(i).getLongitude()))
-                        .geodesic(true).color(Color.RED));
-            }
-
-        }
-    }
+        final MainApplication mainApplication = MainApplication.getInstance();
+//    private void drawtrace(Vector<AMapLocation> track)
+//    {
+//        aMap.addPolyline(new PolylineOptions().add(new LatLng(track.elementAt(0).getLatitude(),track.elementAt(0).getLongitude())).geodesic(true).color(Color.RED));
+//        if(!track.isEmpty())
+//        {
+//            for(int i=1;i<track.size();i++)
+//            {
+//                aMap.addPolyline(new PolylineOptions()
+//                        .visible(true)
+//                        .add(new LatLng(track.elementAt(i).getLatitude(), track.elementAt(i).getLongitude()))
+//                        .geodesic(true).color(Color.RED));
+//            }
+//
+//        }
+//    }
     private void drawtraceBypoint(Vector<AMapLocation> track)
     {
         //将vector内的最后两点连接在一起
@@ -106,14 +120,17 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 if(trackenabled) {
                     track.add(amapLocation);
+                    Node nde = new Node();
+                    nde.setPoint(new Point(amapLocation.getLatitude(),amapLocation.getLongitude()));
+                    node.add(track.size()-1,nde);
                     if(track.size()>1)
                     {
                         button_addmarker.setVisibility(View.VISIBLE);
                     }
-
 //                    String a;
 //                    a = amapLocation.getAddress();
                     drawtraceBypoint(track);
+                    Log.e("nodesize",node.size()+"");
                 }
 
 
@@ -162,6 +179,8 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         button_addmarker.setVisibility(View.GONE);
         button_addmarker.setOnClickListener(this);
 
+        button_saveRoute = (Button)findViewById(R.id.button_saveRoute);
+        button_saveRoute.setOnClickListener(this);
         button_start = (Button)findViewById(R.id.button);
         button_start.setOnClickListener(this);
         button_start.setBackgroundColor(Color.GREEN);
@@ -215,9 +234,55 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
                 startActivityForResult(intent_marker, 1000);
 
                 break;
+            case R.id.button_saveRoute:
+                saveRoute();
             default:
                 break;
         }
+
+    }
+    public void saveRoute()
+    {
+
+
+        TDUtils.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    HttpUtils httpUtils = new HttpUtils();
+                    RequestParams requestParams = new RequestParams("utf-8");
+                    requestParams.setContentType("application/json;charset=utf-8");
+
+                    Route route = new Route();
+//                   route.setUser(new User(mainApplication.getUserid(),mainApplication.getUsername(),mainApplication.getUserpassword()));
+                    route.setUser(new User("abc","abc",""));
+                    route.setDescription("");  // 暂时为空
+                    route.setRouteId(mainApplication.getUserid() + new Date());
+                    node.lastElement();
+                    route.setNodes(node);
+                    requestParams.setBodyEntity(new StringEntity(JSON.toJSONString(route), "utf-8"));
+
+                    httpUtils.send(HttpRequest.HttpMethod.POST, mainApplication.getUploadRouteInfoUrl(), requestParams, new RequestCallBack<Object>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<Object> objectResponseInfo) {
+
+                        }
+
+                        @Override
+                        public void onFailure(HttpException e, String s) {
+                            Log.d("tanjingrusb", s);
+                        }
+                    });
+
+
+                } catch (Exception e) {
+                    //					NetExceptionManager.showException(context, e);
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 //    // 收取activity传回的值 新建marker
@@ -325,13 +390,13 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
     {
       //   /storage/emulated/0/DCIM/Camera/1448518655415.jpg
      //   file://   /sdcard/DCIM/Camera/1448518655415.jpg
-
         imagepath.setText(picUrl);
         MarkerOptions markerOptions = new MarkerOptions();
         // 设置Marker点击之后显示的标题
-        markerOptions.title(title+"\n"+content);
+        markerOptions.title(title+":"+"\n"+"  "+content);
         // 当前vector最后一位 即最后定位的一个点进行记录。
         LatLng latLng = new LatLng( track.lastElement().getLatitude(), track.lastElement().getLongitude());
+        node.get(track.size()).setAtn(new Atn(content,picUrl,title));
         markerOptions.position(latLng);
         // 设置Marker的可见性
         markerOptions.visible(true);
@@ -339,8 +404,7 @@ public class MainActivity extends Activity implements LocationSource,AMapLocatio
         markerOptions.draggable(false);
         // 将Marker添加到地图上去
         aMap.addMarker(markerOptions);
-        // Marker的计数器自增
-        markerCounts++;
+
 
     }
 }

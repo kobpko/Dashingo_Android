@@ -9,27 +9,18 @@
     android:focusable="false">
 
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/button_1"
-        android:id="@+id/tomap"
-        android:layout_gravity="bottom"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp" />
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/text_id"
         android:background="@android:drawable/edit_text"
-        android:hint="请输入您的帐号"
+        android:hint="请输入您的用户名"
         android:focusable="true"
         android:textIsSelectable="false"
-        android:layout_below="@+id/tomap"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="169dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -52,7 +43,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="68dp" />
+        android:layout_marginBottom="68dp"
+        android:background="#0096ec" />
 
     <RelativeLayout
         android:layout_width="match_parent"

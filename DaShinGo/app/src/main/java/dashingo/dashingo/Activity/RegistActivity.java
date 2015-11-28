@@ -2,12 +2,12 @@ package dashingo.dashingo.Activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.alibaba.fastjson.JSON;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -15,12 +15,14 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import org.apache.http.entity.StringEntity;
 
-
+import java.util.List;
 
 import basic.TDUtils;
 import dashingo.dashingo.R;
-import database.DatabaseHelper;
+
+import model.Route;
 import model.User;
 
 public class RegistActivity extends Activity implements View.OnClickListener{
@@ -96,11 +98,14 @@ public class RegistActivity extends Activity implements View.OnClickListener{
                 try {
 
                     HttpUtils httpUtils = new HttpUtils();
-                    RequestParams requestParams = new RequestParams();
-                    requestParams.addBodyParameter("userid","1352892sb");
-                    requestParams.addBodyParameter("password","1234");
-                    requestParams.addBodyParameter("username","tanjingru");
-                    //send(http指令，url,requestparams,requestcallback)
+                    RequestParams requestParams = new RequestParams("utf-8");
+                    requestParams.setContentType("application/json;charset=utf-8");
+
+                    User user = new User();
+                    user.setUserId(textView_id.getText().toString());
+                    user.setPassword(textView_password.getText().toString());
+                    user.setUserName("tanjingrusb");
+                    requestParams.setBodyEntity(new StringEntity(JSON.toJSONString(user),"utf-8"));
                     httpUtils.send(HttpRequest.HttpMethod.POST,mainApplication.getSignupUrl(), requestParams, new RequestCallBack<Object>() {
                         @Override
                         public void onSuccess(ResponseInfo<Object> objectResponseInfo) {
@@ -109,7 +114,7 @@ public class RegistActivity extends Activity implements View.OnClickListener{
 
                         @Override
                         public void onFailure(HttpException e, String s) {
-
+                            Log.d("tanjingrusb",s);
                         }
                     });
 
@@ -134,7 +139,8 @@ public class RegistActivity extends Activity implements View.OnClickListener{
     public void onClick(View view){
         switch (view.getId()) {
             case R.id.button_regist:
-                registUser();
+//                registUser();
+                test();
                 break;
             case R.id.button_regback:
                 finish();
@@ -142,6 +148,49 @@ public class RegistActivity extends Activity implements View.OnClickListener{
             default:
                 break;
         }
+
+    }
+
+
+
+    public void test()
+    {
+        TDUtils.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    HttpUtils httpUtils = new HttpUtils();
+                    RequestParams requestParams = new RequestParams();
+                    httpUtils.send(HttpRequest.HttpMethod.GET,"http://10.0.1.22:8080/route/getAll", requestParams, new RequestCallBack<Object>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<Object> objectResponseInfo) {
+
+                            List<Route> routeList = (List<Route>) JSON.parse((String) objectResponseInfo.result);
+                            Log.d("1352863sb",routeList.toString());
+
+
+                        }
+
+                        @Override
+                        public void onFailure(HttpException e, String s) {
+                            Log.d("tanjingrusb",s);
+                        }
+                    });
+
+
+
+
+
+
+                }catch (Exception e) {
+                    //					NetExceptionManager.showException(context, e);
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
 
     }
 

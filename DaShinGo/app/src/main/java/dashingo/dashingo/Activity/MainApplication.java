@@ -10,7 +10,18 @@ public class MainApplication extends Application {
     private String userpassword;
     private String username;
     private static String signupUrl ="http://10.0.1.22:8080/signUp";
+    private static String signinUrl ="http://10.0.1.22:8080/signIn";
+    private static String uploadRouteInfoUrl ="http://10.0.1.22:8080/uploadRouteInfo";
     private static MainApplication instance;
+
+    public static String getUploadRouteInfoUrl() {
+        return uploadRouteInfoUrl;
+    }
+
+    public static String getSigninUrl() {
+
+        return signinUrl;
+    }
 
     public static MainApplication getInstance() {
         return instance;
